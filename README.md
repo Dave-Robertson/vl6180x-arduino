@@ -1,4 +1,4 @@
-# VL6180X library for Arduino
+# VL6180X library for Arduino modifed for software I2C using SoftwareWire library.
 
 Version: 1.2.0<br>
 Release date: 2016 May 18<br>
