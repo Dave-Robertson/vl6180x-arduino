@@ -2,8 +2,9 @@
 #define VL6180X_h
 
 #include <Arduino.h>
+#include <SoftwareWire.h>
 
-class VL6180X
+class VL6180Xsofti2c
 {
   public:
     // register addresses
@@ -83,7 +84,8 @@ class VL6180X
 
     uint8_t last_status; // status of last I2C transmission
 
-    VL6180X(void);
+    
+    VL6180Xsofti2c(uint8_t sdaPin = 30, uint8_t sclPin = 31);
 
     void setAddress(uint8_t new_addr);
 
@@ -124,6 +126,9 @@ class VL6180X
     uint8_t ptp_offset;
     uint16_t io_timeout;
     bool did_timeout;
+    uint8_t _sdaPin;
+    uint8_t _sclPin;
+    SoftwareWire _i2c;
 };
 
 #endif

@@ -1,5 +1,5 @@
-#include <VL6180X.h>
-#include <Wire.h>
+#include <VL6180Xsofti2c.h>
+#include <SoftwareWire.h>
 
 // Defines /////////////////////////////////////////////////////////////////////
 
@@ -12,7 +12,7 @@ static uint16_t const ScalerValues[] = {0, 253, 127, 84};
 
 // Constructors ////////////////////////////////////////////////////////////////
 
-VL6180X::VL6180X(void)
+VL6180X::VL6180Xsofti2c(void)
   : address(ADDRESS_DEFAULT)
   , scaling(0)
   , ptp_offset(0)
@@ -146,35 +146,35 @@ void VL6180X::configureDefault(void)
 // Writes an 8-bit register
 void VL6180X::writeReg(uint16_t reg, uint8_t value)
 {
-  Wire.beginTransmission(address);
-  Wire.write((reg >> 8) & 0xff);  // reg high byte
-  Wire.write(reg & 0xff);         // reg low byte
-  Wire.write(value);
-  last_status = Wire.endTransmission();
+  _i2c.beginTransmission(address);
+  _i2c.write((reg >> 8) & 0xff);  // reg high byte
+  _i2c.write(reg & 0xff);         // reg low byte
+  _i2c.write(value);
+  last_status = _i2c.endTransmission();
 }
 
 // Writes a 16-bit register
 void VL6180X::writeReg16Bit(uint16_t reg, uint16_t value)
 {
-  Wire.beginTransmission(address);
-  Wire.write((reg >> 8) & 0xff);  // reg high byte
-  Wire.write(reg & 0xff);         // reg low byte
-  Wire.write((value >> 8) & 0xff);  // value high byte
-  Wire.write(value & 0xff);         // value low byte
-  last_status = Wire.endTransmission();
+  _i2c.beginTransmission(address);
+  _i2c.write((reg >> 8) & 0xff);  // reg high byte
+  _i2c.write(reg & 0xff);         // reg low byte
+  _i2c.write((value >> 8) & 0xff);  // value high byte
+  _i2c.write(value & 0xff);         // value low byte
+  last_status = _i2c.endTransmission();
 }
 
 // Writes a 32-bit register
 void VL6180X::writeReg32Bit(uint16_t reg, uint32_t value)
 {
-  Wire.beginTransmission(address);
-  Wire.write((reg >> 8) & 0xff);  // reg high byte
-  Wire.write(reg & 0xff);         // reg low byte
-  Wire.write((value >> 24) & 0xff); // value highest byte
-  Wire.write((value >> 16) & 0xff);
-  Wire.write((value >> 8) & 0xff);
-  Wire.write(value & 0xff);         // value lowest byte
-  last_status = Wire.endTransmission();
+  _i2c.beginTransmission(address);
+  _i2c.write((reg >> 8) & 0xff);  // reg high byte
+  _i2c.write(reg & 0xff);         // reg low byte
+  _i2c.write((value >> 24) & 0xff); // value highest byte
+  _i2c.write((value >> 16) & 0xff);
+  _i2c.write((value >> 8) & 0xff);
+  _i2c.write(value & 0xff);         // value lowest byte
+  last_status = _i2c.endTransmission();
 }
 
 // Reads an 8-bit register
@@ -182,14 +182,14 @@ uint8_t VL6180X::readReg(uint16_t reg)
 {
   uint8_t value;
 
-  Wire.beginTransmission(address);
-  Wire.write((reg >> 8) & 0xff);  // reg high byte
-  Wire.write(reg & 0xff);         // reg low byte
-  last_status = Wire.endTransmission();
+  _i2c.beginTransmission(address);
+  _i2c.write((reg >> 8) & 0xff);  // reg high byte
+  _i2c.write(reg & 0xff);         // reg low byte
+  last_status = _i2c.endTransmission();
 
-  Wire.requestFrom(address, (uint8_t)1);
-  value = Wire.read();
-  Wire.endTransmission();
+  _i2c.requestFrom(address, (uint8_t)1);
+  value = _i2c.read();
+  _i2c.endTransmission();
 
   return value;
 }
@@ -199,15 +199,15 @@ uint16_t VL6180X::readReg16Bit(uint16_t reg)
 {
   uint16_t value;
 
-  Wire.beginTransmission(address);
-  Wire.write((reg >> 8) & 0xff);  // reg high byte
-  Wire.write(reg & 0xff);         // reg low byte
-  last_status = Wire.endTransmission();
+  _i2c.beginTransmission(address);
+  _i2c.write((reg >> 8) & 0xff);  // reg high byte
+  _i2c.write(reg & 0xff);         // reg low byte
+  last_status = _i2c.endTransmission();
 
-  Wire.requestFrom(address, (uint8_t)2);
-  value = (uint16_t)Wire.read() << 8; // value high byte
-  value |= Wire.read();               // value low byte
-  Wire.endTransmission();
+  _i2c.requestFrom(address, (uint8_t)2);
+  value = (uint16_t)_i2c.read() << 8; // value high byte
+  value |= _i2c.read();               // value low byte
+  _i2c.endTransmission();
 
   return value;
 }
@@ -217,17 +217,17 @@ uint32_t VL6180X::readReg32Bit(uint16_t reg)
 {
   uint32_t value;
 
-  Wire.beginTransmission(address);
-  Wire.write((reg >> 8) & 0xff);  // reg high byte
-  Wire.write(reg & 0xff);         // reg low byte
-  last_status = Wire.endTransmission();
+  _i2c.beginTransmission(address);
+  _i2c.write((reg >> 8) & 0xff);  // reg high byte
+  _i2c.write(reg & 0xff);         // reg low byte
+  last_status = _i2c.endTransmission();
 
-  Wire.requestFrom(address, (uint8_t)4);
-  value = (uint32_t)Wire.read() << 24;  // value highest byte
-  value |= (uint32_t)Wire.read() << 16;
-  value |= (uint16_t)Wire.read() << 8;
-  value |= Wire.read();                 // value lowest byte
-  Wire.endTransmission();
+  _i2c.requestFrom(address, (uint8_t)4);
+  value = (uint32_t)_i2c.read() << 24;  // value highest byte
+  value |= (uint32_t)_i2c.read() << 16;
+  value |= (uint16_t)_i2c.read() << 8;
+  value |= _i2c.read();                 // value lowest byte
+  _i2c.endTransmission();
 
   return value;
 }
